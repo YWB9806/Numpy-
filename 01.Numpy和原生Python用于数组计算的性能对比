@@ -1,0 +1,230 @@
+### Numpy和原生Python用于数组计算的性能对比
+需求：
+* 实现两个数组的加法;
+* 数组A是1--N数字的平方;
+* 数组B是1--N数字的立方
+
+### 引入Numpy的包
+
+
+```python
+import numpy as np
+```
+
+
+```python
+np.__version__
+```
+
+
+
+
+    '1.18.1'
+
+
+
+### 使用Python原生语法实现对比
+
+
+```python
+def python_sum(n):
+    '''
+    Python实现数组的加法
+    n:数组的长度
+    '''
+    a = [i**2 for i in range(n)]
+    b = [i**3 for i in range(n)]
+    c = []
+    for i in range(n):
+        c.append(a[i] + b[i])
+    return c
+```
+
+
+```python
+#测试一下
+python_sum(10)
+```
+
+
+
+
+    [0, 2, 12, 36, 80, 150, 252, 392, 576, 810]
+
+
+
+### 使用Numpy实现
+
+
+```python
+def numpy_sum(n):
+    '''
+    numpy实现数组的加法
+    n:数组的长度
+    '''
+    a = np.arange(n) ** 2
+    b = np.arange(n) ** 3
+    return a+b#对应元素相加
+```
+
+
+```python
+#测试一下
+numpy_sum(10)
+```
+
+
+
+
+    array([  0,   2,  12,  36,  80, 150, 252, 392, 576, 810], dtype=int32)
+
+
+
+### 性能对比：执行1000次
+
+
+```python
+%timeit python_sum(1000)
+```
+
+    1.63 ms ± 492 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)
+
+
+
+```python
+%timeit numpy_sum(1000)
+```
+
+    11.7 µs ± 705 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)
+
+
+### 性能对比：执行10W次
+
+
+```python
+%timeit python_sum(100000)
+```
+
+    141 ms ± 22.6 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+
+
+
+```python
+%timeit numpy_sum(100000)
+```
+
+    524 µs ± 22 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)
+
+
+### 性能对比:执行1000W次
+
+
+```python
+%timeit python_sum(1000 * 10000)
+```
+
+    14.5 s ± 903 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+
+
+
+```python
+%timeit numpy_sum(1000 * 10000)
+```
+
+    184 ms ± 1.94 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+
+
+### 绘制性能对比图
+
+
+```python
+pytimes = [1.06*1000, 104*1000, 10.4*1000*1000]
+nptimes = [9.16, 424, 114*1000]
+```
+
+
+```python
+import pandas as pd
+```
+
+
+```python
+df = pd.DataFrame({
+    "pytimes":pytimes,
+    "nptimes":nptimes,
+})
+```
+
+
+```python
+df
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+    
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pytimes</th>
+      <th>nptimes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1060.0</td>
+      <td>9.16</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>104000.0</td>
+      <td>424.00</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>10400000.0</td>
+      <td>114000.00</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+%matplotlib inline
+df.plot.bar()
+```
+
+
+
+
+    <matplotlib.axes._subplots.AxesSubplot at 0x1a6821dc388>
+
+
+
+
+![png](output_24_1.png)
+
+
+
+```python
+
+```
